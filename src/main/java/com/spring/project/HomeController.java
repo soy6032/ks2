@@ -768,7 +768,14 @@ public class HomeController {
       return "/login";
     }
 	
-
+	//질문 리스트
+	 @RequestMapping(value = "/questionList", method = RequestMethod.GET)
+	    public String questionList(Model model) {
+		 List<dataDTO> questionList = user_service.questionList();
+		 model.addAttribute("questionList", questionList);
+		 System.out.println("questionList_size : " + questionList.size());
+	      return "questionList";
+	  }
 	
 	
 	
