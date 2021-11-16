@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.project.map.map">
+	<!-- 
+		* 타이틀: 사용자 회원가입
+	    * 파라미터 : dataDTO
+	    * 리턴값 : -
+	    * 설명 : ① 사용자 회원가입을 위한 쿼리
+	           ② 입력 받은 비밀번호를 (HEX(AES_ENCRYPT(#{user_pw}, 'code')))로 code 라는 키값을 가진 데이터로 변환 후 적재
+	 -->
+	 <!-- 개인 회원 가입 -->
+	<insert id="insert_user_userInsert"
+	parameterType="com.spring.project.Dto.dataDTO" >
+		insert into `account`(account_authority, account_id, account_password, account_name, account_tel, account_email, account_zipcode, account_address, account_address_detail)
+		value(3, #{account_id}, (HEX(AES_ENCRYPT(#{account_password}, 'code'))), #{account_name}, #{account_tel}, #{account_email}, #{account_zipcode}, #{account_address}, #{account_address_detail} ); 
+	</insert>
+	 <!-- 개인 회원 가입 -->
+	 
+	<!-- 기업 회원 가입 -->
+	<insert id="insert_company_companyInsert"
+	parameterType="com.spring.project.Dto.dataDTO" >
+		insert into `account`(account_authority, account_id, account_password, account_name, account_tel, account_email, account_zipcode, account_address, account_address_detail)
+		value(2, #{account_id}, (HEX(AES_ENCRYPT(#{account_password}, 'code'))), #{account_name}, #{account_tel}, #{account_email}, #{account_zipcode}, #{account_address}, #{account_address_detail} ); 
+		<selectKey keyProperty="account_idx" resultType="int" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		
+	</insert>
+	<!-- 기업 회원 가입 -->
+	<insert id="insert_company_companyInsert2"
+	parameterType="com.spring.project.Dto.dataDTO" >
+		insert into `company`(account_idx, company_name, company_manager, company_division, company_businessnum, company_sectors, company_ceo, company_fax, company_mainiteam)
+		value(#{account_idx}, #{company_name}, #{company_manager}, #{company_division}, #{company_businessnum}, #{company_sectors}, #{company_ceo}, #{company_fax}, #{company_mainiteam} );
+	</insert>
+	<!-- 
+		* 타이틀: 로그인 쿼리
+	    * 파라미터 : dataDTO
+	    * 리턴값 : dataDTO
+	    * 설명 : ① 사용자 로그인을 위한 쿼리
+	           ② 시큐리티를 사용하지 않을 시 해당 쿼리를 사용해 입력 받은  ID/PW 가 데이터베이스에 존재 하는지 여부 판단
+	           ③ mysql exists 함수가 데이터 존재 여부 판단해주는 함수
+	 -->
+	<select id="select_user_userLogin" parameterType="com.spring.project.Dto.dataDTO" resultType="com.spring.project.Dto.dataDTO">
+		select exists(select * from `user` where user_id = #{user_id} 
+		AND user_pw = (HEX(AES_ENCRYPT(#{user_pw}, 'code')))
+		) as `status`;	
+	</select>
+	
+	<select id="loginInfo" parameterType="com.spring.project.Dto.dataDTO" resultType="com.spring.project.Dto.dataDTO">
+		select * from `account` where account_id = #{account_id}
+	</select>
+	
+	<!-- 공지등록 -->
+	<insert id="noticeInsert" parameterType="com.spring.project.Dto.dataDTO">
+		insert into `notice`(account_idx, notice_title, notice_content)
+		value(#{account_idx}, #{notice_title}, #{notice_content});
+	</insert>
+	
+	<!-- 공지목록 -->
+	<select id="noticeSelect" resultType="com.spring.project.Dto.dataDTO">
+		select * from `notice` where notice_delflag = 'n'
+	</select>
+	
+	<!-- 공지수정 -->
+	<update id="noticeUpdate" parameterType="com.spring.project.Dto.dataDTO">
+		update `notice` set 
+		`notice_title` = #{notice_title},
+		`notice_content` = #{notice_content}
+		where notice_idx = #{notice_idx};
+	</update>
+	
+	<!-- 공지상세 -->
+	<select id="noticeDetail" parameterType="com.spring.project.Dto.dataDTO" resultType="com.spring.project.Dto.dataDTO">
+		select * from `notice` 
+		join account on account.account_idx = notice.account_idx 
+		where notice_idx = #{notice_idx} and notice_delflag = 'n'
+	</select>
+	
+	<!-- 공지삭제 -->
+	<update id="noticeDelete" parameterType="com.spring.project.Dto.dataDTO">
+		update `notice` set 
+		`notice_delflag` = 'y'
+		where notice_idx = #{notice_idx};
+	</update>
+	
+	<!-- 회원 정보 변경 -->
+	<update id="user_info_update" parameterType="com.spring.project.Dto.dataDTO">
+		update `account` set 
+		`account_tel` = #{account_tel},
+		`account_email` = #{account_email},
+		`account_zipcode` = #{account_zipcode},
+		`account_address` = #{account_address},
+		`account_address_detail` = #{account_address_detail}
+		where account_idx = #{account_idx};
+	</update>
+	
+	<!-- 제품 등록 -->
+	<insert id="productInsert" parameterType="com.spring.project.Dto.dataDTO">
+		insert into `product`(product_name, product_category, product_image,product_file, product_content)
+		value(#{product_name}, #{product_category}, #{product_image},#{product_file}, #{product_content});
+	</insert>
+	
+	<!-- 제품 목록 -->
+	<select id="productList" resultType="com.spring.project.Dto.dataDTO">
+		select * from `product` 
+		where product_delflag = 'n'
+	</select>
+	
+	<!-- 제품 상세 -->
+	<select id="productDetail" resultType="com.spring.project.Dto.dataDTO">
+		select * from `product` 
+		where product_idx = #{product_idx} and product_delflag = 'n'
+	</select>
+	
+	<!-- 제품 수정 -->
+	<update id="productUpdate" parameterType="com.spring.project.Dto.dataDTO">
+		update `product` set 
+		`product_name` = #{product_name},
+		`product_category` = #{product_category}
+		<if test="product_image != 'null'">
+			  ,product_image = #{product_image}			
+		</if>
+		<if test="product_file != 'null'">
+			  ,product_file = #{product_file}			
+		</if>
+		,`product_content` = #{product_content}
+		where product_idx = #{product_idx};
+	</update>
+	
+	<!-- 제품 삭제 -->
+	<update id="productDelete" parameterType="com.spring.project.Dto.dataDTO">
+		update `product` set 
+		`product_delflag` = 'y'
+		where product_idx = #{product_idx};
+	</update>
+</mapper>
