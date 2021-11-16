@@ -62,6 +62,8 @@ public interface user_Service {
 	
 	//제품 삭제
 	public void productDelete(dataDTO data);
+
+	public List<dataDTO> questionList();
 	
 	
 //	-------------------------------------------- //

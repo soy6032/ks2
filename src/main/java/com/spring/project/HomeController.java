@@ -767,7 +767,11 @@ public class HomeController {
       System.out.println("==========userjoin==============");
       return "/login";
     }
-	 
+	
+
+	
+	
+	
 	/* 
 	 * 타이틀: 메인 페이지(첫페이지)
 	 * 파라미터 : -
@@ -779,6 +783,8 @@ public class HomeController {
     	if(!sessionCheck(request)) {			
 			 return "redirect:/login";
 		}
+    	
+
         ModelAndView model = new ModelAndView();
         model.addObject("title", "Spring Security Hello World");
         model.addObject("message", "This is welcome page!");
