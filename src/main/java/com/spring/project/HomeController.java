@@ -767,7 +767,18 @@ public class HomeController {
       System.out.println("==========userjoin==============");
       return "/login";
     }
-	 
+	
+	//질문 리스트
+	 @RequestMapping(value = "/questionList", method = RequestMethod.GET)
+	    public String questionList(Model model) {
+		 List<dataDTO> questionList = user_service.questionList();
+		 model.addAttribute("questionList", questionList);
+		 System.out.println("questionList_size : " + questionList.size());
+	      return "questionList";
+	  }
+	
+	
+	
 	/* 
 	 * 타이틀: 메인 페이지(첫페이지)
 	 * 파라미터 : -
@@ -779,6 +790,8 @@ public class HomeController {
     	if(!sessionCheck(request)) {			
 			 return "redirect:/login";
 		}
+    	
+
         ModelAndView model = new ModelAndView();
         model.addObject("title", "Spring Security Hello World");
         model.addObject("message", "This is welcome page!");

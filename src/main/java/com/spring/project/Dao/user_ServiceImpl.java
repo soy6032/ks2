@@ -117,6 +117,11 @@ public class user_ServiceImpl implements user_Service {
 		// TODO Auto-generated method stub
 		user_dao.productDelete(data);
 	}
+
+	@Override
+	public List<dataDTO> questionList() {
+		return user_dao.questionList();
+	}
 	
 
 }

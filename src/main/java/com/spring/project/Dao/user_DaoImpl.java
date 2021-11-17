@@ -127,5 +127,11 @@ public class user_DaoImpl implements user_Dao {
 		sqlSession.update(NS+".productDelete", data);
 	}
 
+	@Override
+	public List<dataDTO> questionList() {
+		
+		return sqlSession.selectList(NS+".questionList");
+	}
+
 
 }

@@ -25,14 +25,23 @@
 		<selectKey keyProperty="account_idx" resultType="int" order="AFTER">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
-		
 	</insert>
 	<!-- 기업 회원 가입 -->
+	
+	<!-- 기업 회원 가입2 -->
 	<insert id="insert_company_companyInsert2"
 	parameterType="com.spring.project.Dto.dataDTO" >
 		insert into `company`(account_idx, company_name, company_manager, company_division, company_businessnum, company_sectors, company_ceo, company_fax, company_mainiteam)
 		value(#{account_idx}, #{company_name}, #{company_manager}, #{company_division}, #{company_businessnum}, #{company_sectors}, #{company_ceo}, #{company_fax}, #{company_mainiteam} );
 	</insert>
+	<!-- 기업 회원 가입2 -->
+	
+	<!-- 질문 리스트 -->
+	<select id="questionList" resultType="com.spring.project.Dto.dataDTO">
+		select * from `question`;
+	</select>
+	<!-- 질문 리스트 -->
+	
 	<!-- 
 		* 타이틀: 로그인 쿼리
 	    * 파라미터 : dataDTO
