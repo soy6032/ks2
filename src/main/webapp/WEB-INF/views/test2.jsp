@@ -15,8 +15,12 @@
 	<input type="file" name="file_file">
 	<textarea rows="" cols="" name="estimate_content">${productDetail[0].product_content }</textarea>
 	<input type="hidden" value="${productDetail[0].product_idx }" name="product_idx">
+<<<<<<< HEAD
 	<input type="submit" class="" value="전송">git test~fasfdgd소영소영정우//소영
 
+=======
+	<input type="submit" class="" value="전송">git test!!!!!
+>>>>>>> refs/remotes/origin/master
 </form>
 	
 <jsp:include page="include/footer_setting.jsp"/>
