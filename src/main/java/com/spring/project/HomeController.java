@@ -286,7 +286,14 @@ public class HomeController {
 		 
 	      return "account/join_step2";
 	  }
-	 
+	 @RequestMapping(value = "/joinagree2", method = RequestMethod.GET)
+	    public String joinagree2() {
+	    	
+		 
+		 
+		 
+	      return "account/join_step2-1";
+	  }
 	 
 	 /*
 	  * 회원가입 Step1 - 유형 선택
@@ -748,7 +755,7 @@ public class HomeController {
 	  }
 	 
 	 
-	//개인 회원가입.
+	//개인 회원가입.(11/15)
 	@RequestMapping(value = "/accountsave", method = RequestMethod.POST)
     public String accountsave(HttpServletRequest request, Model model, dataDTO datadto) {
 	  System.out.println("==========userjoin==============");
@@ -756,7 +763,7 @@ public class HomeController {
       System.out.println("==========userjoin==============");
       return "/login";
     }
-	//기업 회원가입.
+	//기업 회원가입.(11/15)
 	@RequestMapping(value = "/companysave", method = RequestMethod.POST)
     public String companysave(HttpServletRequest request, Model model, dataDTO datadto) {
 	  System.out.println("==========userjoin==============");
@@ -767,7 +774,429 @@ public class HomeController {
       System.out.println("==========userjoin==============");
       return "/login";
     }
+	
+	//Q&A 리스트(11/16)
+	 @RequestMapping(value = "/questionList", method = RequestMethod.GET)
+	    public String questionList(Model model) {
+		 List<dataDTO> questionList = user_service.questionList();
+		 model.addAttribute("questionList", questionList);
+		 System.out.println("questionList_size : " + questionList.size());
+	      return "questionList";
+	  }
 	 
+	//Q&A 등록(11/16)
+	 @RequestMapping(value = "/questionInsert/{account_idx}", method = RequestMethod.GET)
+	 public String questionInsert(@PathVariable("account_idx") int account_idx, HttpServletRequest request, Model model,dataDTO data, 
+	    		@RequestParam("file_file") MultipartFile file_file) {
+	    	
+		 if(!file_file.isEmpty()) { //파일이 있을때 실행
+	  		  // FTP 관련 객체 선언
+	  		
+	  	 	Session ses = null;             // 접속계정
+	  	 	Channel ch  = null;             // 접속
+	  	 	JSch jsch   = new JSch();       // jsch 객체를 생성
+	  	 	String fileoriname = "";
+	  	 	String filename = "";
+	  	 	String fileUUID = "";
+	        
+	  	 	try {
+	            // 세션 객체를 생성(사용자 이름, 접속할 호스트, 포트)
+	            ses = jsch.getSession(FTP_ID, FTP_IP, FTP_PORT);
+	            // 비밀번호 설정
+	            ses.setPassword(FTP_PWD);
+	      
+	            // 세션과 관련된 정보를 설정
+	            Properties p = new Properties();
+
+	            // 호스트 정보를 검사하지 않음
+	            p.put("StrictHostKeyChecking", "no");
+	            ses.setConfig(p);
+	            System.out.println("연결중");
+	            // 접속
+	            ses.connect();   
+	            System.out.println("///////////////////확인용3");
+	            // 채널을 오픈(sftp)
+	            ch = ses.openChannel("sftp");
+	            System.out.println("///////////////////확인용4");
+	            // 채널에 연결(sftp)      
+	            ch.connect();        
+
+	            // 채널을 FTP용 채널 객체로 개스팅
+
+	            chSftp = (ChannelSftp)ch;   
+	            System.out.println("FTP 연결이 되었습니다.");          
+	            
+	            boolean result = true;
+	            InputStream in = null;
+	            InputStream in_i = null;
+	            InputStream in_v = null;
+	            InputStream in_m = null;
+	            
+	  	          try {
+	  	        	 
+	  	              //fileName = URLEncoder.encode(fileName,"EUC-KR");
+	  	              in = file_file.getInputStream();
+	  	              //chSftp.cd("/home/codebros/codebros/public/upload/workform");
+	  	              System.out.println("///////////////////확인용1");
+	  	              chSftp.cd("/bsrraon/tomcat/webapps/imagefile/ks/product");  
+	  	              System.out.println("///////////////////확인용2");
+	  	              MultipartFile mf_x = file_file;
+	  	              fileoriname = mf_x.getOriginalFilename();
+	  	              filename = FilenameUtils.getExtension(mf_x.getOriginalFilename());
+		              
+		              SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		              String today = dateFormat.format(new Date());  	              
+	  	              fileUUID = today+ "_file."+ filename;
+	  	          	  System.out.println("====================");
+	  	          	  System.out.println("filename : "+ in);
+	  	          	  System.out.println("filename : "+ fileoriname);
+	  	          	  System.out.println("rename : "+ fileUUID);
+	  	          	  System.out.println("====================");  
+	  	              chSftp.put(in, fileUUID);	      	  	              
+	  	          } catch (Exception e) {
+	  	              e.printStackTrace();
+	  	              result = false;
+	  	          }
+	            chSftp.quit();                            // Sftp 연결 종료
+	            System.out.println("FTP 연결을 종료합니다.");
+	         } catch(Exception e) {
+	            e.printStackTrace();
+	            System.out.println("FTP 연결에 실패했습니다.");
+	         }  	
+	  	 	   System.out.println("////////////////////////"+ fileoriname);
+	           System.out.println("////////////////////////"+ fileUUID);     
+	           //corarhdto.setFile(fileUUID);
+	          //user_service.subjectinsert(corarhdto);
+	           }
+	  		else {
+	            data.setQuestion_file("null");
+	          }
+		 user_service.questionInsert(data);
+		 
+	      return "redirect:/index";
+	  }
+	 
+	// Q&A 상세.(11/16)
+	@RequestMapping(value = "/questionDetail/{question_idx}", method = RequestMethod.GET)
+	public String questionDetail(@PathVariable("question_idx") int question_idx, HttpServletRequest request,
+			dataDTO data, Model model) {
+		List<dataDTO> questionDetail = user_service.questionDetail(data);
+		model.addAttribute("questionDetail", questionDetail);
+		return "/questionDetail";
+	}
+	
+	//Q&A 수정.(11/16)
+	@RequestMapping(value = "/questioneditor/{question_idx}", method = RequestMethod.GET)
+	public String questioneditor(@PathVariable("question_idx") int question_idx, 
+			HttpServletRequest request, dataDTO data, Model model, MultipartFile file_file) {
+		
+		if(!file_file.isEmpty()) { //파일이 있을때 실행
+	  		  // FTP 관련 객체 선언
+	  		
+	  	 	Session ses = null;             // 접속계정
+	  	 	Channel ch  = null;             // 접속
+	  	 	JSch jsch   = new JSch();       // jsch 객체를 생성
+	  	 	String fileoriname = "";
+	  	 	String filename = "";
+	  	 	String fileUUID = "";
+	        
+	  	 	try {
+	            // 세션 객체를 생성(사용자 이름, 접속할 호스트, 포트)
+	            ses = jsch.getSession(FTP_ID, FTP_IP, FTP_PORT);
+	            // 비밀번호 설정
+	            ses.setPassword(FTP_PWD);
+	      
+	            // 세션과 관련된 정보를 설정
+	            Properties p = new Properties();
+
+	            // 호스트 정보를 검사하지 않음
+	            p.put("StrictHostKeyChecking", "no");
+	            ses.setConfig(p);
+	            System.out.println("연결중");
+	            // 접속
+	            ses.connect();   
+	            System.out.println("///////////////////확인용3");
+	            // 채널을 오픈(sftp)
+	            ch = ses.openChannel("sftp");
+	            System.out.println("///////////////////확인용4");
+	            // 채널에 연결(sftp)      
+	            ch.connect();        
+
+	            // 채널을 FTP용 채널 객체로 개스팅
+
+	            chSftp = (ChannelSftp)ch;   
+	            System.out.println("FTP 연결이 되었습니다.");          
+	            
+	            boolean result = true;
+	            InputStream in = null;
+	            InputStream in_i = null;
+	            InputStream in_v = null;
+	            InputStream in_m = null;
+	            
+	  	          try {
+	  	        	 
+	  	              //fileName = URLEncoder.encode(fileName,"EUC-KR");
+	  	              in = file_file.getInputStream();
+	  	              //chSftp.cd("/home/codebros/codebros/public/upload/workform");
+	  	              System.out.println("///////////////////확인용1");
+	  	              chSftp.cd("/bsrraon/tomcat/webapps/imagefile/ks/product");  
+	  	              System.out.println("///////////////////확인용2");
+	  	              MultipartFile mf_x = file_file;
+	  	              fileoriname = mf_x.getOriginalFilename();
+	  	              filename = FilenameUtils.getExtension(mf_x.getOriginalFilename());
+		              
+		              SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		              String today = dateFormat.format(new Date());  	              
+	  	              fileUUID = today+ "_file."+ filename;
+	  	          	  System.out.println("====================");
+	  	          	  System.out.println("filename : "+ in);
+	  	          	  System.out.println("filename : "+ fileoriname);
+	  	          	  System.out.println("rename : "+ fileUUID);
+	  	          	  System.out.println("====================");  
+	  	              chSftp.put(in, fileUUID);	      	  	              
+	  	          } catch (Exception e) {
+	  	              e.printStackTrace();
+	  	              result = false;
+	  	          }
+	            chSftp.quit();                            // Sftp 연결 종료
+	            System.out.println("FTP 연결을 종료합니다.");
+	         } catch(Exception e) {
+	            e.printStackTrace();
+	            System.out.println("FTP 연결에 실패했습니다.");
+	         }  	
+	  	 	   System.out.println("////////////////////////"+ fileoriname);
+	           System.out.println("////////////////////////"+ fileUUID);     
+	           //corarhdto.setFile(fileUUID);
+	          //user_service.subjectinsert(corarhdto);
+	           }
+	  		else {
+	            data.setQuestion_file("null");
+	          }
+		 
+		 user_service.questioneditor(data);
+		
+	return "/questioneditor";
+	}
+	//Q&A 삭제.(11/17)
+	@RequestMapping(value = "/questionDelete/{question_idx}", method = RequestMethod.GET)
+    public String questionDelete(@PathVariable("question_idx") int question_idx, Model model, dataDTO data) {
+	 data.setQuestion_idx(question_idx);
+	 user_service.questionDelete(data);
+      return "questionDelete";
+      
+	}
+	//댓글 등록.(11/17)
+	@RequestMapping(value = "/requestioninsert/{account_idx}/{question_idx}", method = RequestMethod.GET)
+	public String requestioninsert(@PathVariable("account_idx") int account_idx, @PathVariable("question_idx") int question_idx, HttpServletRequest request, dataDTO data, Model model,
+			MultipartFile file_file) {
+		 if(!file_file.isEmpty()) { //파일이 있을때 실행
+	  		  // FTP 관련 객체 선언
+	  		
+	  	 	Session ses = null;             // 접속계정
+	  	 	Channel ch  = null;             // 접속
+	  	 	JSch jsch   = new JSch();       // jsch 객체를 생성
+	  	 	String fileoriname = "";
+	  	 	String filename = "";
+	  	 	String fileUUID = "";
+	        
+	  	 	try {
+	            // 세션 객체를 생성(사용자 이름, 접속할 호스트, 포트)
+	            ses = jsch.getSession(FTP_ID, FTP_IP, FTP_PORT);
+	            // 비밀번호 설정
+	            ses.setPassword(FTP_PWD);
+	      
+	            // 세션과 관련된 정보를 설정
+	            Properties p = new Properties();
+
+	            // 호스트 정보를 검사하지 않음
+	            p.put("StrictHostKeyChecking", "no");
+	            ses.setConfig(p);
+	            System.out.println("연결중");
+	            // 접속
+	            ses.connect();   
+	            System.out.println("///////////////////확인용3");
+	            // 채널을 오픈(sftp)
+	            ch = ses.openChannel("sftp");
+	            System.out.println("///////////////////확인용4");
+	            // 채널에 연결(sftp)      
+	            ch.connect();        
+
+	            // 채널을 FTP용 채널 객체로 개스팅
+
+	            chSftp = (ChannelSftp)ch;   
+	            System.out.println("FTP 연결이 되었습니다.");          
+	            
+	            boolean result = true;
+	            InputStream in = null;
+	            InputStream in_i = null;
+	            InputStream in_v = null;
+	            InputStream in_m = null;
+	            
+	  	          try {
+	  	        	 
+	  	              //fileName = URLEncoder.encode(fileName,"EUC-KR");
+	  	              in = file_file.getInputStream();
+	  	              //chSftp.cd("/home/codebros/codebros/public/upload/workform");
+	  	              System.out.println("///////////////////확인용1");
+	  	              chSftp.cd("/bsrraon/tomcat/webapps/imagefile/ks/product");  
+	  	              System.out.println("///////////////////확인용2");
+	  	              MultipartFile mf_x = file_file;
+	  	              fileoriname = mf_x.getOriginalFilename();
+	  	              filename = FilenameUtils.getExtension(mf_x.getOriginalFilename());
+		              
+		              SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		              String today = dateFormat.format(new Date());  	              
+	  	              fileUUID = today+ "_file."+ filename;
+	  	          	  System.out.println("====================");
+	  	          	  System.out.println("filename : "+ in);
+	  	          	  System.out.println("filename : "+ fileoriname);
+	  	          	  System.out.println("rename : "+ fileUUID);
+	  	          	  System.out.println("====================");  
+	  	              chSftp.put(in, fileUUID);	      	  	              
+	  	          } catch (Exception e) {
+	  	              e.printStackTrace();
+	  	              result = false;
+	  	          }
+	            chSftp.quit();                            // Sftp 연결 종료
+	            System.out.println("FTP 연결을 종료합니다.");
+	         } catch(Exception e) {
+	            e.printStackTrace();
+	            System.out.println("FTP 연결에 실패했습니다.");
+	         }  	
+	  	 	   System.out.println("////////////////////////"+ fileoriname);
+	           System.out.println("////////////////////////"+ fileUUID);     
+	           //corarhdto.setFile(fileUUID);
+	          //user_service.subjectinsert(corarhdto);
+	           }
+	  		else {
+	            data.setRequestion_file("null");
+	          }
+		 
+		 user_service.requestioninsert(data);
+		 
+	return "/requestioninsert";
+	}
+	
+	//댓글 삭제
+	@RequestMapping(value = "/requestionDelete/{requestion_idx}", method = RequestMethod.GET)
+    public String requestionDelete(@PathVariable("requestion_idx") int requestion_idx, Model model, dataDTO data) {
+    	
+	 data.setRequestion_idx(requestion_idx);
+	 
+	 user_service.requestionDelete(data);
+	 
+      return "requestionDelete";
+  }
+	
+	//댓글 수정
+	@RequestMapping(value = "/requestioneditor/{requestion_idx}", method = RequestMethod.GET)
+	public String requestioneditor(@PathVariable("requestion_idx") int requestion_idx, 
+			HttpServletRequest request, dataDTO data, Model model, MultipartFile file_file) {
+		if(!file_file.isEmpty()) { //파일이 있을때 실행
+	  		  // FTP 관련 객체 선언
+	  		
+	  	 	Session ses = null;             // 접속계정
+	  	 	Channel ch  = null;             // 접속
+	  	 	JSch jsch   = new JSch();       // jsch 객체를 생성
+	  	 	String fileoriname = "";
+	  	 	String filename = "";
+	  	 	String fileUUID = "";
+	        
+	  	 	try {
+	            // 세션 객체를 생성(사용자 이름, 접속할 호스트, 포트)
+	            ses = jsch.getSession(FTP_ID, FTP_IP, FTP_PORT);
+	            // 비밀번호 설정
+	            ses.setPassword(FTP_PWD);
+	      
+	            // 세션과 관련된 정보를 설정
+	            Properties p = new Properties();
+
+	            // 호스트 정보를 검사하지 않음
+	            p.put("StrictHostKeyChecking", "no");
+	            ses.setConfig(p);
+	            System.out.println("연결중");
+	            // 접속
+	            ses.connect();   
+	            System.out.println("///////////////////확인용3");
+	            // 채널을 오픈(sftp)
+	            ch = ses.openChannel("sftp");
+	            System.out.println("///////////////////확인용4");
+	            // 채널에 연결(sftp)      
+	            ch.connect();        
+
+	            // 채널을 FTP용 채널 객체로 개스팅
+
+	            chSftp = (ChannelSftp)ch;   
+	            System.out.println("FTP 연결이 되었습니다.");          
+	            
+	            boolean result = true;
+	            InputStream in = null;
+	            InputStream in_i = null;
+	            InputStream in_v = null;
+	            InputStream in_m = null;
+	            
+	  	          try {
+	  	        	 
+	  	              //fileName = URLEncoder.encode(fileName,"EUC-KR");
+	  	              in = file_file.getInputStream();
+	  	              //chSftp.cd("/home/codebros/codebros/public/upload/workform");
+	  	              System.out.println("///////////////////확인용1");
+	  	              chSftp.cd("/bsrraon/tomcat/webapps/imagefile/ks/product");  
+	  	              System.out.println("///////////////////확인용2");
+	  	              MultipartFile mf_x = file_file;
+	  	              fileoriname = mf_x.getOriginalFilename();
+	  	              filename = FilenameUtils.getExtension(mf_x.getOriginalFilename());
+		              
+		              SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		              String today = dateFormat.format(new Date());  	              
+	  	              fileUUID = today+ "_file."+ filename;
+	  	          	  System.out.println("====================");
+	  	          	  System.out.println("filename : "+ in);
+	  	          	  System.out.println("filename : "+ fileoriname);
+	  	          	  System.out.println("rename : "+ fileUUID);
+	  	          	  System.out.println("====================");  
+	  	              chSftp.put(in, fileUUID);	      	  	              
+	  	          } catch (Exception e) {
+	  	              e.printStackTrace();
+	  	              result = false;
+	  	          }
+	            chSftp.quit();                            // Sftp 연결 종료
+	            System.out.println("FTP 연결을 종료합니다.");
+	         } catch(Exception e) {
+	            e.printStackTrace();
+	            System.out.println("FTP 연결에 실패했습니다.");
+	         }  	
+	  	 	   System.out.println("////////////////////////"+ fileoriname);
+	           System.out.println("////////////////////////"+ fileUUID);     
+	           //corarhdto.setFile(fileUUID);
+	          //user_service.subjectinsert(corarhdto);
+	           }
+	  		else {
+	            data.setRequestion_file("null");
+	          }
+		 
+		 user_service.requestioneditor(data);
+	return "/requestioneditor";
+	}
+	
+	//댓글 상세(11월 17일)
+	@RequestMapping(value = "/requestionDetail/{requestion_idx}", method = RequestMethod.GET)
+	public String requestionDetail(@PathVariable("requestion_idx") int requestion_idx, HttpServletRequest request,
+			dataDTO data, Model model) {
+		List<dataDTO> requestionDetail = user_service.requestionDetail(data);
+		model.addAttribute("requestionDetail", requestionDetail);
+		return "/requestionDetail";
+	}
+	
+	//아이디 중복 체크 (11월 18일)
+	@ResponseBody
+	@RequestMapping(value = "/account_id_check", method = RequestMethod.GET)
+	public int account_id_check(dataDTO data) {
+		int result = user_service.account_id_check(data);
+		System.out.println(result);
+		return result;
+	}
+	
 	/* 
 	 * 타이틀: 메인 페이지(첫페이지)
 	 * 파라미터 : -
@@ -779,6 +1208,8 @@ public class HomeController {
     	if(!sessionCheck(request)) {			
 			 return "redirect:/login";
 		}
+    	
+
         ModelAndView model = new ModelAndView();
         model.addObject("title", "Spring Security Hello World");
         model.addObject("message", "This is welcome page!");

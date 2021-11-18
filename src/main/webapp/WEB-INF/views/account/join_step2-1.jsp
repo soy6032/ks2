@@ -33,7 +33,7 @@
 
 				<!-- Form Style Default -->
 				<section class="section-block signup-1 pt-0">
-					<form class="signup-form" action="joinform" method="get" novalidate>
+					<form onsubmit="return checks()" action="joinform" method="get" >
 						<!-- 이용약관동의 -->
 						<div class="row">
 							<div class="column width-12 text-left bord-b subpage-title">
@@ -83,7 +83,7 @@
 										</div>
 										<input type="text" name="honeypot" class="form-honeypot form-element">
 										<div class="column width-4 offset-4">
-											<input type="button" value="다음"  onclick="location.href='joinform'"
+											<input type="submit" value="다음" 
 											class="form-submit button rounded large bkg-theme bkg-hover-green color-white color-hover-white">
 										</div>
 									
@@ -128,9 +128,17 @@
 		$("#join-type-2").mouseout(function() {
 			 $(this).attr("src","${pageContext.request.contextPath}/resources/images/ks/join_06.png");
 		});
-
-
 	});
 	</script>
+	
 	<script>
+	function checks(){
+		var checkbox-1 = document.getElementById("checkbox-1");
+		
+		if(document.data.checkbox-1[0]).checked==false &&
+		document.data.checkbox-1[1]).checked==false) {
+			alert("Test");
+			return false;
+		} 
+	}
 	</script>

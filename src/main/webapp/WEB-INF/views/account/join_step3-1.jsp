@@ -63,6 +63,7 @@
 										<div class="column width-10">
 											<div class="field-wrapper">
 												<input type="text" name="account_id" id="account_id" class="form-fname form-element rounded small" placeholder="" tabindex="1" required="">
+												<button type="button" class="id_check" name="id_check" id="id_check" onclick="idcheck();" value="N">중복확인</button>
 											</div>
 										</div>
 									</div>
@@ -209,6 +210,7 @@
 	            }
 	        }).open();
 	    }
+	    
 	</script>
 	<!-- 주소 api -->
 	
@@ -274,3 +276,23 @@
           return true;
       }
  </script>
+ 
+ <script>
+	function idcheck() {
+		$.ajax({
+			url : "${pageContext.request.contextPath}/account_id_check",
+			type : "get",
+			dataType : "json",
+			data : {"account_id" : $("#account_id").val()},
+			success : function(data){
+				if(data == 1 ) {
+					alert("중복된 아이디입니다.");
+				}else if(data == 0){
+					$("#id_check").attr("value", "Y");
+					alert("사용가능한 아이디입니다.");
+				}
+			}
+		})
+	}
+</script>
+ 

@@ -25,14 +25,126 @@
 		<selectKey keyProperty="account_idx" resultType="int" order="AFTER">
 			SELECT LAST_INSERT_ID()
 		</selectKey>
-		
 	</insert>
 	<!-- 기업 회원 가입 -->
+	
+	<!-- 기업 회원 가입2 -->
 	<insert id="insert_company_companyInsert2"
 	parameterType="com.spring.project.Dto.dataDTO" >
 		insert into `company`(account_idx, company_name, company_manager, company_division, company_businessnum, company_sectors, company_ceo, company_fax, company_mainiteam)
 		value(#{account_idx}, #{company_name}, #{company_manager}, #{company_division}, #{company_businessnum}, #{company_sectors}, #{company_ceo}, #{company_fax}, #{company_mainiteam} );
 	</insert>
+	<!-- 기업 회원 가입2 -->
+	
+	<!-- Q&A 리스트 -->
+	<select id="questionList"
+		resultType="com.spring.project.Dto.dataDTO">
+		SELECT * FROM `question`
+		join requestion ON
+		question.question_idx = requestion.question_idx
+		WHERE question_delflag = 'n' AND requestion_delflag = 'n';
+</select>
+	<!-- Q&A 리스트 -->
+	
+	<!-- Q&A 등록 -->
+	<insert id="questionInsert" parameterType="com.spring.project.Dto.dataDTO">
+		insert into `question`(account_idx, question_title, question_content, question_file, question_password)
+		value(#{account_idx}, #{question_title}, #{question_content}, #{question_file}, #{question_password});
+	</insert>
+	<!-- Q&A 등록 -->
+	
+	<!-- Q&A 상세 -->
+	<select id="questionDetail" resultType="com.spring.project.Dto.dataDTO">
+		select * from `question` 
+		join account on account.account_idx = question.account_idx 
+		WHERE question_idx = ${question_idx} and question_delflag = 'n';
+	</select>
+	<!--  Q&A 상세 -->
+	
+	<!-- Q&A 삭제 -->
+	<update id="questionDelete" parameterType="com.spring.project.Dto.dataDTO">
+		update `question` set 
+		`question_delflag` = 'y'
+		where question_idx = #{question_idx};
+	</update>
+	<!-- Q&A 삭제 -->
+	
+	<!-- Q&A 수정 -->
+	<update id="questioneditor" parameterType="com.spring.project.Dto.dataDTO">
+		update `question` set 
+		`question_title` = #{question_title},
+		`question_content` = #{question_content},
+		<if test="requestion_file != 'null'">
+			  `question_file` = #{question_file},
+		</if>
+		`question_password` = #{question_password}
+		where question_idx = #{question_idx};
+	</update>
+	<!-- Q&A 수정 -->
+	
+	<!-- 댓글 등록 -->
+	<insert id="requestioninsert" parameterType="com.spring.project.Dto.dataDTO">
+		insert into `requestion`
+		(question_idx, account_idx, requestion_title, requestion_content, requestion_file)
+		value
+		(#{question_idx}, #{account_idx}, #{question_title}, #{question_content}, #{requestion_file});
+	</insert>
+	<!-- 댓글 등록 -->
+	
+	<!-- 댓글 수정 -->
+	<update id="requestioneditor" parameterType="com.spring.project.Dto.dataDTO">
+		update `requestion` set 
+		`requestion_title` = #{requestion_title},
+		`requestion_content` = #{requestion_content},
+		<if test="requestion_file != 'null'">
+			  requestion_file = #{requestion_file}
+		</if>
+		where requestion_idx = #{requestion_idx};
+	</update>
+	<!-- 댓글 수정 -->
+	
+	<!-- 댓글 삭제 -->
+	<update id="requestionDelete" parameterType="com.spring.project.Dto.dataDTO">
+		update `requestion` set 
+		`requestion_delflag` = 'y'
+		where requestion_idx = #{requestion_idx};
+	</update>
+	<!-- 댓글 삭제 -->
+	
+	<!-- 댓글 상세 -->
+	<select id="requestionDetail" parameterType="com.spring.project.Dto.dataDTO">
+		select * from `requestion` 
+		join account on account.account_idx = requestion.account_idx 
+		WHERE requestion_idx = ${requestion_idx} and requestion_delflag = 'n';
+	</select>
+	<!-- 댓글 상세 -->
+	
+	<!-- 아이디 찾기 -->
+	<select id="find_id" parameterType="com.spring.project.Dto.dataDTO">
+		select id from account 
+		where account_tel = #{account_tel} and account_email=#{account_email};
+	</select>
+	<!-- 아이디 찾기 -->
+	
+	<!-- 비밀번호 변경 -->
+	<select id="password_check" parameterType="com.spring.project.Dto.dataDTO">		
+		select account_password
+		from account 
+		where `account`.`account_password` = (HEX(AES_ENCRYPT(#{account_password}, 'code')));
+	</select>
+	
+	<update id="updatepassword" parameterType="com.spring.project.Dto.dataDTO">
+		update `account` set `account_password` = HEX(AES_ENCRYPT(#{account_password}, 'code')) where account_idx = #{account_idx};
+	</update>
+	<!-- 비밀번호 변경 -->
+	
+	<!-- 아이디 중복 체크 -->
+		<select id="account_id_check" resultType="int">
+			select count(*) from account
+			where account_id = #{account_id}
+		</select>
+	<!-- 아이디 중복 체크 -->
+	
 	<!-- 
 		* 타이틀: 로그인 쿼리
 	    * 파라미터 : dataDTO

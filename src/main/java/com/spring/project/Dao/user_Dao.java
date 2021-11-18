@@ -60,6 +60,28 @@ public interface user_Dao {
 	
 	//제품 삭제
 	public void productDelete(dataDTO data);
+	
+	//Q&A 리스트 조회
+	public List<dataDTO> questionList();
+	//Q&A 등록
+	public void questionInsert(dataDTO data);
+	//Q&A 수정
+	public void questioneditor(dataDTO data);
+	//Q&A 상세
+	public List<dataDTO> questionDetail(dataDTO data);
+	//Q&A 삭제
+	public void questionDelete(dataDTO data);
+	
+	//댓글 등록 (11월 17일)
+	public void requestioninsert(dataDTO data);
+	//댓글 상세 (11월 17일)
+	public List<dataDTO> requestionDetail(dataDTO data);
+	//댓글 수정 (11월 17일)
+	public void requestioneditor(dataDTO data);
+	//댓글 삭제 (11월 17일)
+	public void requestionDelete(dataDTO data);
+	//아이디 중복 체크(11월 18일)
+	public int account_id_check(dataDTO data);
 		
 		
 		//--------------------------------------//

@@ -105,7 +105,8 @@ button {
                                             <input type="password" class="form-fname form-element rounded small" name="account_password" placeholder="비밀번호를 입력해주세요.">
                                         </div>
                                         <div class="text-center ">
-                                        	<button type="button" class="form-submit button rounded small bkg-theme bkg-hover-green color-white color-hover-white">회원가입</button>
+                                        	<button type="button" class="form-submit button rounded small bkg-theme bkg-hover-green color-white color-hover-white"
+                                        	onclick="location.href='join'">회원가입</button>
                                             <button type="submit" class="form-submit button rounded small bkg-theme bkg-hover-green color-white color-hover-white">LOGIN</button>
                                         </div>
                                         <div class="text-center ul-left">
