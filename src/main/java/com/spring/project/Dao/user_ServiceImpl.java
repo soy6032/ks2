@@ -117,10 +117,65 @@ public class user_ServiceImpl implements user_Service {
 		// TODO Auto-generated method stub
 		user_dao.productDelete(data);
 	}
-
+	
+	//Q&A 리스트 조회
 	@Override
 	public List<dataDTO> questionList() {
 		return user_dao.questionList();
+	}
+	//Q&A 등록
+	@Override
+	public void questionInsert(dataDTO data) {
+		user_dao.questionInsert(data);	
+	}
+	//Q&A 상세
+	@Override
+	public List<dataDTO> questionDetail(dataDTO data) {
+		// TODO Auto-generated method stub
+		return user_dao.questionDetail(data);
+	}
+	//Q&A 수정
+	@Override
+	public void questioneditor(dataDTO data) {
+		// TODO Auto-generated method stub
+		user_dao.questioneditor(data);	
+	}
+	// Q&A 삭제
+	@Override
+	public void questionDelete(dataDTO data) {
+		// TODO Auto-generated method stub
+		user_dao.questionDelete(data);
+	}
+		
+	//댓글 등록 (11월 17일)
+	@Override
+	public void requestioninsert(dataDTO data) {
+		// TODO Auto-generated method stub
+		user_dao.requestioninsert(data);
+	}
+	//댓글 상세 (11월 17일)
+	@Override
+	public List<dataDTO> requestionDetail(dataDTO data) {
+		return user_dao.requestionDetail(data);
+	}
+	//댓글 수정 (11월 17일)
+	@Override
+	public void requestioneditor(dataDTO data) {
+		// TODO Auto-generated method stub
+		user_dao.requestioneditor(data);
+	}
+	//댓글 삭제 (11월 17일)
+	@Override
+	public void requestionDelete(dataDTO data) {
+		// TODO Auto-generated method stub
+		user_dao.requestionDelete(data);
+	}
+	//아이디 중복 체크 (11월 18일)
+	@Override
+	public int account_id_check(dataDTO data){
+		// TODO Auto-generated method stub
+		int result = user_dao.account_id_check(data);
+		return result;
 	}
 	
 
