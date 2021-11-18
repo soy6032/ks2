@@ -47,6 +47,7 @@ public class dataDTO {
 	private int estimatehistory_idx;
 	private String estimatehistory_content;
 	private String estimatehistory_file;
+	private String estimatehistory_img;
 	private String estimatehistory_delflag;
 	private String estimatehistory_createtime;
 	private String estimatehistory_updatetime;
@@ -94,19 +95,20 @@ public class dataDTO {
 			String account_createtime, String account_updatetime, int company_idx, String company_name,
 			String company_manager, String company_division, String company_businessnum, String company_sectors,
 			String company_ceo, String company_fax, String company_delflag, String company_createtime,
-			String company_updatetime, int estimate_idx, int product_idx, String estimate_productpurpose,
-			String estimate_productsize, String estimate_duedate, int estimate_budget1, int estimate_budget2,
-			String estimate_file, String estimate_content, String estimate_state, String estimate_delflag,
-			String estimate_createtime, String estimate_updatetime, int estimatehistory_idx,
-			String estimatehistory_content, String estimatehistory_file, String estimatehistory_delflag,
-			String estimatehistory_createtime, String estimatehistory_updatetime, int notice_idx, String notice_title,
-			String notice_content, String notice_delflag, String notice_createtime, String notice_updatetime,
-			String product_name, String product_category, String product_image, String product_file,
-			String product_content, String product_delflag, String product_createtime, String product_updatetime,
-			int question_idx, String question_title, String question_content, String question_file,
-			String question_password, String question_delflag, String question_createtime, String question_updatetime,
-			int requestion_idx, String requestion_title, String requestion_content, String requestion_file,
-			String requestion_delflag, String requestion_createtime, String requestion_updatetime, String company_mainiteam) {
+			String company_updatetime, String company_mainiteam, int estimate_idx, int product_idx,
+			String estimate_productpurpose, String estimate_productsize, String estimate_duedate, int estimate_budget1,
+			int estimate_budget2, String estimate_file, String estimate_content, String estimate_state,
+			String estimate_delflag, String estimate_createtime, String estimate_updatetime, int estimatehistory_idx,
+			String estimatehistory_content, String estimatehistory_file, String estimatehistory_img,
+			String estimatehistory_delflag, String estimatehistory_createtime, String estimatehistory_updatetime,
+			int notice_idx, String notice_title, String notice_content, String notice_delflag, String notice_createtime,
+			String notice_updatetime, String product_name, String product_category, String product_image,
+			String product_file, String product_content, String product_delflag, String product_createtime,
+			String product_updatetime, int question_idx, String question_title, String question_content,
+			String question_file, String question_password, String question_delflag, String question_createtime,
+			String question_updatetime, int requestion_idx, String requestion_title, String requestion_content,
+			String requestion_file, String requestion_delflag, String requestion_createtime,
+			String requestion_updatetime) {
 		super();
 		this.account_idx = account_idx;
 		this.account_authority = account_authority;
@@ -133,6 +135,7 @@ public class dataDTO {
 		this.company_delflag = company_delflag;
 		this.company_createtime = company_createtime;
 		this.company_updatetime = company_updatetime;
+		this.company_mainiteam = company_mainiteam;
 		this.estimate_idx = estimate_idx;
 		this.product_idx = product_idx;
 		this.estimate_productpurpose = estimate_productpurpose;
@@ -149,6 +152,7 @@ public class dataDTO {
 		this.estimatehistory_idx = estimatehistory_idx;
 		this.estimatehistory_content = estimatehistory_content;
 		this.estimatehistory_file = estimatehistory_file;
+		this.estimatehistory_img = estimatehistory_img;
 		this.estimatehistory_delflag = estimatehistory_delflag;
 		this.estimatehistory_createtime = estimatehistory_createtime;
 		this.estimatehistory_updatetime = estimatehistory_updatetime;
@@ -184,6 +188,18 @@ public class dataDTO {
 	}
 
 
+
+
+
+
+
+	public String getEstimatehistory_img() {
+		return estimatehistory_img;
+	}
+
+	public void setEstimatehistory_img(String estimatehistory_img) {
+		this.estimatehistory_img = estimatehistory_img;
+	}
 
 	public int getAccount_idx() {
 		return account_idx;

@@ -500,5 +500,5 @@
 
 		</div>
 	</div>
-
+main test
 	<jsp:include page="include/footer_setting.jsp"/>

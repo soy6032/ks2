@@ -177,6 +177,19 @@ public class user_ServiceImpl implements user_Service {
 		int result = user_dao.account_id_check(data);
 		return result;
 	}
+
+	//견적등록
+	@Override
+	public void estimateInsert(dataDTO data) {
+		// TODO Auto-generated method stub
+		user_dao.estimateInsert(data);
+	}
+
+	@Override
+	public void estimatehistoryInsert(dataDTO data) {
+		// TODO Auto-generated method stub
+		user_dao.estimatehistoryInsert(data);
+	}
 	
 
 }

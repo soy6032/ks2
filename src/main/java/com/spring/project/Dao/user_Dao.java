@@ -18,13 +18,6 @@ public interface user_Dao {
 
 	public void insert_company_companyInsert2(dataDTO data);
 	
-	
-	//--------------------------------------//
-	
-	
-	
-	//--------------소영----------------------//
-	
 	//로그인한 회원 정보
 	public List<dataDTO> loginInfo(dataDTO data);	
 	
@@ -84,5 +77,11 @@ public interface user_Dao {
 	public int account_id_check(dataDTO data);
 		
 		
-		//--------------------------------------//
+	//--------------------------------------//
+	
+	//견적 등록
+	public void estimateInsert(dataDTO data);
+	
+	//견적 답변등록
+	public void estimatehistoryInsert(dataDTO data);
 }

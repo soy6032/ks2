@@ -188,5 +188,17 @@ public class user_DaoImpl implements user_Dao {
 		return result;
 	}
 
+	@Override
+	public void estimateInsert(dataDTO data) {
+		// TODO Auto-generated method stub
+		sqlSession.insert(NS+".estimateInsert", data);
+	}
+
+	@Override
+	public void estimatehistoryInsert(dataDTO data) {
+		// TODO Auto-generated method stub
+		sqlSession.insert(NS+".estimatehistoryInsert", data);
+	}
+
 
 }

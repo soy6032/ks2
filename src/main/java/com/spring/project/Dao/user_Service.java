@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import com.spring.project.Dto.dataDTO;
 
 public interface user_Service {
-	//--------------정우----------------------//
+	
 	
 	
 	//개인 회원 가입
@@ -19,14 +19,6 @@ public interface user_Service {
 	//회사 회원가입
 	public void companyInsert2(dataDTO data);
 	
-	
-	
-	//--------------------------------------//
-	
-	
-//	-------------------- 소영 --------------------- //
-	
-
     //로그인한 회원 정보
 	public List<dataDTO> loginInfo(dataDTO data);	
 	
@@ -87,6 +79,10 @@ public interface user_Service {
 
 	
 	
+	//견적 등록
+	public void estimateInsert(dataDTO data);
 	
-//	-------------------------------------------- //
+	//견적 답변등록
+	public void estimatehistoryInsert(dataDTO data);
+
 }
