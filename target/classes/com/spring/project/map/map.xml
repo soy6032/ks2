@@ -143,4 +143,16 @@
 		`product_delflag` = 'y'
 		where product_idx = #{product_idx};
 	</update>
+	
+	<!-- 견적 등록 -->
+	<insert id="estimateInsert" parameterType="com.spring.project.Dto.dataDTO">
+		insert into `estimate`(account_idx, product_idx, estimate_productpurpose,estimate_productsize, estimate_duedate, estimate_budget1, estimate_budget2,estimate_file,estimate_content)
+		value(#{account_idx}, #{product_idx}, #{estimate_productpurpose}, #{estimate_productsize}, #{estimate_duedate},#{estimate_budget1}, #{estimate_budget2}, #{estimate_file}, #{estimate_content});
+	</insert>
+	
+	<!-- 견적 답변 등록 -->
+	<insert id="estimatehistoryInsert" parameterType="com.spring.project.Dto.dataDTO">
+		insert into `estimatehistory`(account_idx, estimate_idx, estimatehistory_content, estimatehistory_file, estimatehistory_img)
+		value(#{account_idx}, #{estimate_idx}, #{estimatehistory_content}, #{estimatehistory_file}, #{estimatehistory_img});
+	</insert>
 </mapper>

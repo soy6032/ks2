@@ -204,7 +204,7 @@ public class HomeController {
 	 @RequestMapping(value = "/mypage", method = RequestMethod.GET)
 	    public String mypage(HttpServletRequest request, dataDTO data, Model model, Principal principal) {
 	    	
-		//로그인 회원 id
+		 	//로그인 회원 id
 			String id = principal.getName();
 			System.out.println("id test : " + id);
 			data.setAccount_id(id);
@@ -632,13 +632,21 @@ public class HomeController {
 	 
 	 
 	 /*
-	  * 제품 수정
+	  * 견적등록
 	  * 
 	  * */
 	 @RequestMapping(value = "/estimateInsert", method = RequestMethod.POST)
 	    public String productUpdate(HttpServletRequest request, Model model,dataDTO data, 
-	    		@RequestParam("file_file") MultipartFile file_file) {
-	    	
+	    		@RequestParam("file_file") MultipartFile file_file, Principal principal) {
+	    
+		//로그인 회원 id
+		String id = principal.getName();
+		System.out.println("id test : " + id);
+		data.setAccount_id(id);
+		List<dataDTO> user_info = user_service.loginInfo(data);
+		int idx = user_info.get(0).getAccount_idx();
+		System.out.println("idx : "+idx);
+		 
 		 if(!file_file.isEmpty()) { //파일이 있을때 실행
 	  		  // FTP 관련 객체 선언
 	  		
@@ -742,7 +750,8 @@ public class HomeController {
 	  		else {
 	  			data.setEstimate_file("null");
 	          }
-		 
+		 data.setAccount_idx(idx);
+		 user_service.estimateInsert(data);
 		 
 	      return "redirect:/index";
 	  }
@@ -1000,5 +1009,148 @@ public class HomeController {
       return model;
 
     }
+    
+    /*
+	  * 견적 답변
+	  * 
+	  * */
+	 @RequestMapping(value = "/estimatehistoryInsert", method = RequestMethod.POST)
+	    public String estimatehistoryInsert(HttpServletRequest request, Model model,dataDTO data, 
+	    		@RequestParam("file_file") MultipartFile file_file,@RequestParam("file_img") MultipartFile file_img, Principal principal) {
+	    
+		//로그인 회원 id
+		String id = principal.getName();
+		System.out.println("id test : " + id);
+		data.setAccount_id(id);
+		List<dataDTO> user_info = user_service.loginInfo(data);
+		int idx = user_info.get(0).getAccount_idx();
+		System.out.println("idx : "+idx);
+		 
+		if(!file_file.isEmpty() || !file_img.isEmpty()) { //파일이 있을때 실행
+	  		  // FTP 관련 객체 선언
+	  		
+	  	 	Session ses = null;             // 접속계정
+	  	 	Channel ch  = null;             // 접속
+	  	 	JSch jsch   = new JSch();       // jsch 객체를 생성
+	  	 	String fileoriname = "";
+	  	 	String filename = "";
+	  	 	String fileUUID = "";
+	  	 	
+	  	 	String fileoriname_m = "";
+	  	 	String filename_m = "";
+	  	 	String fileUUID_m = "";
+	  	 	
+	  	 	
+	  	 	
+	        
+	  	 	try {
+	            // 세션 객체를 생성(사용자 이름, 접속할 호스트, 포트)
+	            ses = jsch.getSession(FTP_ID, FTP_IP, FTP_PORT);
+	            // 비밀번호 설정
+	            ses.setPassword(FTP_PWD);
+	      
+	            // 세션과 관련된 정보를 설정
+	            Properties p = new Properties();
+
+	            // 호스트 정보를 검사하지 않음
+	            p.put("StrictHostKeyChecking", "no");
+	            ses.setConfig(p);
+	            System.out.println("연결중");
+	            // 접속
+	            ses.connect();   
+	            System.out.println("///////////////////확인용3");
+	            // 채널을 오픈(sftp)
+	            ch = ses.openChannel("sftp");
+	            System.out.println("///////////////////확인용4");
+	            // 채널에 연결(sftp)      
+	            ch.connect();        
+
+	            // 채널을 FTP용 채널 객체로 개스팅
+
+	            chSftp = (ChannelSftp)ch;   
+	            System.out.println("FTP 연결이 되었습니다.");          
+	            
+	            boolean result = true;
+	            InputStream in = null;
+	            InputStream in_i = null;
+	            InputStream in_v = null;
+	            InputStream in_m = null;
+	            
+	  	          try {
+	  	        	 
+	  	              //fileName = URLEncoder.encode(fileName,"EUC-KR");
+	  	              in = file_file.getInputStream();
+	  	              	in_m = file_img.getInputStream();
+	  	              //chSftp.cd("/home/codebros/codebros/public/upload/workform");
+	  	              System.out.println("///////////////////확인용1");
+	  	              chSftp.cd("/bsrraon/tomcat/webapps/imagefile/ks/product");  
+	  	              System.out.println("///////////////////확인용2");
+	  	              MultipartFile mf_x = file_file;
+	  	              fileoriname = mf_x.getOriginalFilename();
+	  	              filename = FilenameUtils.getExtension(mf_x.getOriginalFilename());
+	  	              
+	  	              MultipartFile mf_m = file_img;
+		              fileoriname_m = mf_m.getOriginalFilename();
+		              filename_m = FilenameUtils.getExtension(mf_m.getOriginalFilename());
+		              
+		              SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		              String today = dateFormat.format(new Date());
+	  	               
+	  	              
+	  	              fileUUID = today+ "_file."+ filename;
+	  	              fileUUID_m = today+ "_img."+filename_m;
+	  	
+	  	          	  System.out.println("====================");
+	  	          	  System.out.println("filename : "+ in);
+	  	          	  System.out.println("filename : "+ fileoriname);
+	  	          	  System.out.println("rename : "+ fileUUID);
+	  	          	  System.out.println("====================");
+	  	          	  
+	  	          	System.out.println("====================");
+		          	  System.out.println("filename : "+ in_m);
+		          	  System.out.println("filename : "+ fileoriname_m);
+		          	  System.out.println("rename : "+ fileUUID_m);
+		          	  System.out.println("====================");
+		          	  
+		          
+	  	           	
+	  	              chSftp.put(in, fileUUID);	
+	  	              chSftp.put(in_m, fileUUID_m);
+	  	              
+	  	              
+	  	          } catch (Exception e) {
+	  	              e.printStackTrace();
+	  	              result = false;
+	  	          }
+
+	            chSftp.quit();                            // Sftp 연결 종료
+	            System.out.println("FTP 연결을 종료합니다.");
+	         } catch(Exception e) {
+	            e.printStackTrace();
+	            System.out.println("FTP 연결에 실패했습니다.");
+	         }
+	  	
+	  	 	   System.out.println("////////////////////////"+ fileoriname);
+	           System.out.println("////////////////////////"+ fileUUID);  
+	           
+	           //corarhdto.setFile(fileUUID);
+	          //user_service.subjectinsert(corarhdto);
+	           data.setEstimatehistory_file(fileUUID);
+	           data.setEstimatehistory_img(fileUUID_m);
+	           
+	          
+	           
+	           }
+	  		else {
+	  			data.setEstimatehistory_file("null");
+	            data.setProduct_file("null");
+	          }
+		 data.setAccount_idx(idx);
+		 user_service.estimatehistoryInsert(data);
+		 
+	      return "redirect:/index";
+	  }
+    
+    
 	
 }

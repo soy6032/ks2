@@ -133,5 +133,17 @@ public class user_DaoImpl implements user_Dao {
 		return sqlSession.selectList(NS+".questionList");
 	}
 
+	@Override
+	public void estimateInsert(dataDTO data) {
+		// TODO Auto-generated method stub
+		sqlSession.insert(NS+".estimateInsert", data);
+	}
+
+	@Override
+	public void estimatehistoryInsert(dataDTO data) {
+		// TODO Auto-generated method stub
+		sqlSession.insert(NS+".estimatehistoryInsert", data);
+	}
+
 
 }
